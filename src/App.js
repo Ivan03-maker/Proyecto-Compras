@@ -8,7 +8,7 @@ function App() {
       <div className="container">
         <div className="productos">
             <div className="producto" data-id="1">
-                <img src="https://via.placeholder.com/280x200?text=Zapatillas" alt="Zapatillas Deportivas"></img>
+                <img src="zapatillas.jpeg" alt="Zapatillas Deportivas"></img>
                 <h3>Zapatillas Deportivas</h3>
                 <p className="descripcion">Zapatillas ideales para running y entrenamiento con amortiguación de alta calidad.</p>
                 <div className="precio">$59.99</div>
@@ -19,7 +19,7 @@ function App() {
             </div>
             
             <div className="producto" data-id="2">
-                <img src="https://via.placeholder.com/280x200?text=Camiseta" alt="Camiseta Básica"></img>
+                <img src="camiseta.jpeg" alt="Camiseta Básica"></img>
                 <h3>Camiseta Básica</h3>
                 <p className="descripcion">Camiseta de algodón 100% en varios colores. Cómoda y transpirable.</p>
                 <div className="precio">$19.99</div>
@@ -30,7 +30,7 @@ function App() {
             </div>
             
             <div className="producto" data-id="3">
-                <img src="https://via.placeholder.com/280x200?text=Jeans" alt="Pantalón Jeans"></img>
+                <img src="jeans.jpeg" alt="Pantalón Jeans"></img>
                 <h3>Pantalón Jeans</h3>
                 <p className="descripcion">Jeans clásicos de corte recto. Disponible en varios talles y lavados.</p>
                 <div className="precio">$39.99</div>
@@ -41,7 +41,7 @@ function App() {
             </div>
             
             <div className="producto" data-id="4">
-                <img src="https://via.placeholder.com/280x200?text=Reloj" alt="Reloj Inteligente"></img>
+                <img src="reloj inteligente.jpeg" alt="Reloj Inteligente"></img>
                 <h3>Reloj Inteligente</h3>
                 <p className="descripcion">Con monitor de actividad, notificaciones y resistencia al agua.</p>
                 <div className="precio">$129.99</div>
