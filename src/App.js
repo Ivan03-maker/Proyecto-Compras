@@ -1,127 +1,207 @@
 import './App.css';
+import React, { useState, useEffect } from 'react';
 
 function App() {
+  const [darkMode, setDarkMode] = useState(false);
+  const [carrito, setCarrito] = useState([]);
+  const [listaDeseos, setListaDeseos] = useState([]);
+  const [productos, setProductos] = useState([]);
+  const [productosComprados, setProductosComprados] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    // Load initial products
+    const initialProductos = [
+      {
+        id: "1",
+        nombre: "Zapatillas Deportivas",
+        precio: 59.99,
+        descripcion: "Zapatillas ideales para running y entrenamiento con amortiguación de alta calidad.",
+        imagen: "zapatillas.jpeg",
+      },
+      {
+        id: "2",
+        nombre: "Camiseta Básica",
+        precio: 19.99,
+        descripcion: "Camiseta de algodón 100% en varios colores. Cómoda y transpirable.",
+        imagen: "camiseta.jpeg",
+      },
+      {
+        id: "3",
+        nombre: "Pantalón Jeans",
+        precio: 39.99,
+        descripcion: "Jeans clásicos de corte recto. Disponible en varios talles y lavados.",
+        imagen: "jeans.jpeg",
+      },
+      {
+        id: "4",
+        nombre: "Reloj Inteligente",
+        precio: 129.99,
+        descripcion: "Con monitor de actividad, notificaciones y resistencia al agua.",
+        imagen: "reloj inteligente.jpeg",
+      },
+    ];
+    setProductos(initialProductos);
+
+    // Load cart and wishlist from localStorage
+    const savedCarrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    const savedListaDeseos = JSON.parse(localStorage.getItem('listaDeseos')) || [];
+    setCarrito(savedCarrito);
+    setListaDeseos(savedListaDeseos);
+  }, []);
+
+  useEffect(() => {
+    // Save cart and wishlist to localStorage whenever they change
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+    localStorage.setItem('listaDeseos', JSON.stringify(listaDeseos));
+  }, [carrito, listaDeseos]);
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    document.body.classList.toggle('dark-mode', !darkMode);
+  };
+
+  const agregarAlCarrito = (productoId) => {
+    const producto = productos.find((p) => p.id === productoId);
+    const productoExistente = carrito.find((item) => item.id === productoId);
+
+    if (productoExistente) {
+      setCarrito(
+        carrito.map((item) =>
+          item.id === productoId ? { ...item, cantidad: item.cantidad + 1 } : item
+        )
+      );
+    } else {
+      setCarrito([...carrito, { ...producto, cantidad: 1 }]);
+    }
+  };
+
+  const agregarAListaDeseos = (productoId) => {
+    const producto = productos.find((p) => p.id === productoId);
+    const productoExistente = listaDeseos.find((item) => item.id === productoId);
+
+    if (!productoExistente) {
+      setListaDeseos([...listaDeseos, producto]);
+    }
+  };
+
+  const vaciarCarrito = () => {
+    setCarrito([]);
+  };
+
+  const finalizarCompra = () => {
+    if (carrito.length === 0) {
+      alert('Tu carrito está vacío. Agrega productos antes de finalizar la compra.');
+      return;
+    }
+
+    setProductosComprados([...carrito]);
+    setCarrito([]);
+    setIsModalOpen(true);
+  };
+
+  const cerrarModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="App">
+      <button className="btn-dark-mode" onClick={toggleDarkMode}>
+        {darkMode ? 'Day Mode' : 'Night Mode'}
+      </button>
       <h1>Tienda Online Avanzada</h1>
-    
+
       <div className="container">
         <div className="productos">
-            <div className="producto" data-id="1">
-                <img src="zapatillas.jpeg" alt="Zapatillas Deportivas"></img>
-                <h3>Zapatillas Deportivas</h3>
-                <p className="descripcion">Zapatillas ideales para running y entrenamiento con amortiguación de alta calidad.</p>
-                <div className="precio">$59.99</div>
-                <div className="acciones-producto">
-                    <button className="btn btn-primary agregar-carrito">Comprar</button>
-                    <button className="btn btn-secondary agregar-deseos">Lista de deseos</button>
-                </div>
+          {productos.map((producto) => (
+            <div key={producto.id} className="producto">
+              <img src={producto.imagen} alt={producto.nombre} />
+              <h3>{producto.nombre}</h3>
+              <p className="descripcion">{producto.descripcion}</p>
+              <div className="precio">${producto.precio.toFixed(2)}</div>
+              <div className="acciones-producto">
+                <button
+                  className="btn btn-primary agregar-carrito"
+                  onClick={() => agregarAlCarrito(producto.id)}
+                >
+                  Comprar
+                </button>
+                <button
+                  className="btn btn-secondary agregar-deseos"
+                  onClick={() => agregarAListaDeseos(producto.id)}
+                >
+                  Lista de deseos
+                </button>
+              </div>
             </div>
-            
-            <div className="producto" data-id="2">
-                <img src="camiseta.jpeg" alt="Camiseta Básica"></img>
-                <h3>Camiseta Básica</h3>
-                <p className="descripcion">Camiseta de algodón 100% en varios colores. Cómoda y transpirable.</p>
-                <div className="precio">$19.99</div>
-                <div className="acciones-producto">
-                    <button className="btn btn-primary agregar-carrito">Comprar</button>
-                    <button className="btn btn-secondary agregar-deseos">Lista de deseos</button>
-                </div>
-            </div>
-            
-            <div className="producto" data-id="3">
-                <img src="jeans.jpeg" alt="Pantalón Jeans"></img>
-                <h3>Pantalón Jeans</h3>
-                <p className="descripcion">Jeans clásicos de corte recto. Disponible en varios talles y lavados.</p>
-                <div className="precio">$39.99</div>
-                <div className="acciones-producto">
-                    <button className="btn btn-primary agregar-carrito">Comprar</button>
-                    <button className="btn btn-secondary agregar-deseos">Lista de deseos</button>
-                </div>
-            </div>
-            
-            <div className="producto" data-id="4">
-                <img src="reloj inteligente.jpeg" alt="Reloj Inteligente"></img>
-                <h3>Reloj Inteligente</h3>
-                <p className="descripcion">Con monitor de actividad, notificaciones y resistencia al agua.</p>
-                <div className="precio">$129.99</div>
-                <div className="acciones-producto">
-                    <button className="btn btn-primary agregar-carrito">Comprar</button>
-                    <button className="btn btn-secondary agregar-deseos">Lista de deseos</button>
-                </div>
-            </div>
+          ))}
         </div>
-        
+
         <div className="panel-lateral">
-            <div className="tabs">
-                <div className="tab activa" data-tab="carrito">Carrito</div>
-                <div className="tab" data-tab="deseos">Lista de deseos</div>
-            </div>
-            
-            <div className="contenido-tab activa" id="carrito">
-                <div className="carrito">
-                    <h2>Tu Carrito</h2>
-                    <div id="items-carrito"></div>
-                    <div className="total">Total: $<span id="total-carrito">0.00</span></div>
-                    <button className="btn btn-vaciar" id="vaciar-carrito">Vaciar Carrito</button>
-                    <button className="btn btn-primary" id="finalizar-compra" style={{ marginTop: '10px' }}>Finalizar Compra</button>
-                </div>
-            </div>
-            
-            <div className="contenido-tab" id="deseos">
-                <div className="lista-deseos">
-                    <h2>Tu Lista de Deseos</h2>
-                    <div id="items-deseos"></div>
-                </div>
-            </div>
-        </div>
-      </div>
-    
-      {/*-- Modal para reseñas --*/}
-      <div className="modal" id="modal-resena">
-        <div className="modal-contenido">
-            <div className="modal-header">
-                <h3>Deja tu reseña</h3>
-                <button className="cerrar-modal">&times;</button>
-            </div>
-            <form id="form-resena">
-                <input type="hidden" id="producto-id-resena" />
-                <div className="form-group">
-                    <label htmlFor="nombre-resena">Tu nombre</label>
-                    <input type="text" id="nombre-resena" required />
-                </div>
-                <div className="form-group">
-                    <label>Calificación</label>
-                    <div className="estrellas">
-                        <span className="estrella" data-valor="1">★</span>
-                        <span className="estrella" data-valor="2">★</span>
-                        <span className="estrella" data-valor="3">★</span>
-                        <span className="estrella" data-valor="4">★</span>
-                        <span className="estrella" data-valor="5">★</span>
+          <div className="tabs">
+            <div className="tab activa" data-tab="carrito">Carrito</div>
+            <div className="tab" data-tab="deseos">Lista de deseos</div>
+          </div>
+
+          <div className="contenido-tab activa" id="carrito">
+            <div className="carrito">
+              <h2>Tu Carrito</h2>
+              {carrito.length === 0 ? (
+                <p>Tu carrito está vacío</p>
+              ) : (
+                carrito.map((item) => (
+                  <div key={item.id} className="item-carrito">
+                    <div className="item-info">
+                      <div className="item-nombre">{item.nombre}</div>
+                      <div className="item-precio">${item.precio.toFixed(2)} c/u</div>
                     </div>
-                    <input type="hidden" id="calificacion" value="0" required />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="comentario-resena">Comentario</label>
-                    <textarea id="comentario-resena" required></textarea>
-                </div>
-                <button type="submit" className="btn btn-enviar">Enviar Reseña</button>
-            </form>
+                    <div className="item-cantidad">
+                      <button onClick={() => agregarAlCarrito(item.id)}>+</button>
+                      <span>{item.cantidad}</span>
+                      <button onClick={() => vaciarCarrito(item.id)}>-</button>
+                    </div>
+                  </div>
+                ))
+              )}
+              <div className="total">
+                Total: $
+                {carrito.reduce((total, item) => total + item.precio * item.cantidad, 0).toFixed(2)}
+              </div>
+              <button className="btn btn-vaciar" onClick={vaciarCarrito}>
+                Vaciar Carrito
+              </button>
+              <button className="btn btn-primary" onClick={finalizarCompra}>
+                Finalizar Compra
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-    
-      {/*<!-- Modal de compra finalizada -->*/}
-      <div className="modal" id="modal-compra">
-        <div className="modal-contenido">
+
+      {/* Modal for Purchase Completion */}
+      {isModalOpen && (
+        <div className="modal">
+          <div className="modal-contenido">
             <div className="modal-header">
-                <h3>¡Compra Finalizada!</h3>
-                <button className="cerrar-modal">&times;</button>
+              <h3>¡Compra Finalizada!</h3>
+              <button className="cerrar-modal" onClick={cerrarModal}>
+                &times;
+              </button>
             </div>
             <p>Gracias por tu compra. ¿Te gustaría dejar una reseña sobre los productos adquiridos?</p>
-            <div id="productos-comprados"></div>
-            <button className="btn btn-primary" id="btn-resenar" style={{ marginTop: '20px' }}>Dejar Reseña</button>
+            <div id="productos-comprados">
+              {productosComprados.map((producto) => (
+                <div key={producto.id}>
+                  <p>{producto.nombre}</p>
+                </div>
+              ))}
+            </div>
+            <button className="btn btn-primary" onClick={cerrarModal} style={{ marginTop: '20px' }}>
+              Dejar Reseña
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
