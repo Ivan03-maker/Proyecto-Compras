@@ -1,0 +1,98 @@
+<div className="App">
+      <button className="btn-dark-mode" onClick={toggleDarkMode}>
+        {darkMode ? 'Day Mode' : 'Night Mode'}
+      </button>
+      <h1>Tienda Online Avanzada</h1>
+
+      <div className="container">
+        <div className="productos">
+          {productos.map((producto) => (
+            <div key={producto.id} className="producto">
+              <img src={producto.imagen} alt={producto.nombre} />
+              <h3>{producto.nombre}</h3>
+              <p className="descripcion">{producto.descripcion}</p>
+              <div className="precio">${producto.precio.toFixed(2)}</div>
+              <div className="acciones-producto">
+                <button
+                  className="btn btn-primary agregar-carrito"
+                  onClick={() => agregarAlCarrito(producto.id)}
+                >
+                  Comprar
+                </button>
+                <button
+                  className="btn btn-secondary agregar-deseos"
+                  onClick={() => agregarAListaDeseos(producto.id)}
+                >
+                  Lista de deseos
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="panel-lateral">
+          <div className="tabs">
+            <div className="tab activa" data-tab="carrito">Carrito</div>
+            <div className="tab" data-tab="deseos">Lista de deseos</div>
+          </div>
+
+          <div className="contenido-tab activa" id="carrito">
+            <div className="carrito">
+              <h2>Tu Carrito</h2>
+              {carrito.length === 0 ? (
+                <p>Tu carrito está vacío</p>
+              ) : (
+                carrito.map((item) => (
+                  <div key={item.id} className="item-carrito">
+                    <div className="item-info">
+                      <div className="item-nombre">{item.nombre}</div>
+                      <div className="item-precio">${item.precio.toFixed(2)} c/u</div>
+                    </div>
+                    <div className="item-cantidad">
+                      <button onClick={() => agregarAlCarrito(item.id)}>+</button>
+                      <span>{item.cantidad}</span>
+                      <button onClick={() => vaciarCarrito(item.id)}>-</button>
+                    </div>
+                  </div>
+                ))
+              )}
+              <div className="total">
+                Total: $
+                {carrito.reduce((total, item) => total + item.precio * item.cantidad, 0).toFixed(2)}
+              </div>
+              <button className="btn btn-vaciar" onClick={vaciarCarrito}>
+                Vaciar Carrito
+              </button>
+              <button className="btn btn-primary" onClick={finalizarCompra}>
+                Finalizar Compra
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Modal for Purchase Completion */}
+      {isModalOpen && (
+        <div className="modal">
+          <div className="modal-contenido">
+            <div className="modal-header">
+              <h3>¡Compra Finalizada!</h3>
+              <button className="cerrar-modal" onClick={cerrarModal}>
+                &times;
+              </button>
+            </div>
+            <p>Gracias por tu compra. ¿Te gustaría dejar una reseña sobre los productos adquiridos?</p>
+            <div id="productos-comprados">
+              {productosComprados.map((producto) => (
+                <div key={producto.id}>
+                  <p>{producto.nombre}</p>
+                </div>
+              ))}
+            </div>
+            <button className="btn btn-primary" onClick={cerrarModal} style={{ marginTop: '20px' }}>
+              Dejar Reseña
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
