@@ -1,0 +1,105 @@
+import './App.css';
+import React, { useState, useEffect } from 'react';
+
+function App() {
+  const [darkMode, setDarkMode] = useState(false);
+  const [carrito, setCarrito] = useState([]);
+  const [listaDeseos, setListaDeseos] = useState([]);
+  const [productos, setProductos] = useState([]);
+  const [productosComprados, setProductosComprados] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    // Load initial products
+    const initialProductos = [
+      {
+        id: "1",
+        nombre: "Zapatillas Deportivas",
+        precio: 59.99,
+        descripcion: "Zapatillas ideales para running y entrenamiento con amortiguación de alta calidad.",
+        imagen: "zapatillas.jpeg",
+      },
+      {
+        id: "2",
+        nombre: "Camiseta Básica",
+        precio: 19.99,
+        descripcion: "Camiseta de algodón 100% en varios colores. Cómoda y transpirable.",
+        imagen: "camiseta.jpeg",
+      },
+      {
+        id: "3",
+        nombre: "Pantalón Jeans",
+        precio: 39.99,
+        descripcion: "Jeans clásicos de corte recto. Disponible en varios talles y lavados.",
+        imagen: "jeans.jpeg",
+      },
+      {
+        id: "4",
+        nombre: "Reloj Inteligente",
+        precio: 129.99,
+        descripcion: "Con monitor de actividad, notificaciones y resistencia al agua.",
+        imagen: "reloj inteligente.jpeg",
+      },
+    ];
+    setProductos(initialProductos);
+
+    // Load cart and wishlist from localStorage
+    const savedCarrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    const savedListaDeseos = JSON.parse(localStorage.getItem('listaDeseos')) || [];
+    setCarrito(savedCarrito);
+    setListaDeseos(savedListaDeseos);
+  }, []);
+
+  useEffect(() => {
+    // Save cart and wishlist to localStorage whenever they change
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+    localStorage.setItem('listaDeseos', JSON.stringify(listaDeseos));
+  }, [carrito, listaDeseos]);
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    document.body.classList.toggle('dark-mode', !darkMode);
+  };
+
+  const agregarAlCarrito = (productoId) => {
+    const producto = productos.find((p) => p.id === productoId);
+    const productoExistente = carrito.find((item) => item.id === productoId);
+
+    if (productoExistente) {
+      setCarrito(
+        carrito.map((item) =>
+          item.id === productoId ? { ...item, cantidad: item.cantidad + 1 } : item
+        )
+      );
+    } else {
+      setCarrito([...carrito, { ...producto, cantidad: 1 }]);
+    }
+  };
+
+  const agregarAListaDeseos = (productoId) => {
+    const producto = productos.find((p) => p.id === productoId);
+    const productoExistente = listaDeseos.find((item) => item.id === productoId);
+
+    if (!productoExistente) {
+      setListaDeseos([...listaDeseos, producto]);
+    }
+  };
+
+  const vaciarCarrito = () => {
+    setCarrito([]);
+  };
+
+  const finalizarCompra = () => {
+    if (carrito.length === 0) {
+      alert('Tu carrito está vacío. Agrega productos antes de finalizar la compra.');
+      return;
+    }
+
+    setProductosComprados([...carrito]);
+    setCarrito([]);
+    setIsModalOpen(true);
+  };
+
+  const cerrarModal = () => {
+    setIsModalOpen(false);
+  };
